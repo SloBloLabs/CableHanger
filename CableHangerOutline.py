@@ -23,13 +23,14 @@ class CableHangerOutline(ActionPlugin):
         self.RenderCableHangerOutline()
     
     def RenderCableHangerOutline(self):
-        #self.drawLineCSym(-150, -150, 150, -150)
-        #self.drawLineCSym( 150, -150, 150,  150)
         
+        self._gapHeight = 90
+
         # Eurorack comb
-        self.drawEurorackComb()
+        loc = self.drawEurorackComb()
 
         # Other cables comb
+        self.drawOthersComb(loc[0][0], loc[0][1], loc[1])
 
         # Tool holes
         
@@ -39,11 +40,10 @@ class CableHangerOutline(ActionPlugin):
     def drawEurorackComb(self):
         toothWidth = 6
         gapWidth = 5
-        gapHight = 100
-        retainerHight = 8
+        retainerHeight = 8
         retainerBump = .5
-        n = 27
-        chWidth = 27 * gapWidth + (27 + 1) * toothWidth
+        n = 26
+        chWidth = n * gapWidth + (n + 1) * toothWidth
         
         start_x = -chWidth / 2
         start_y = start_x
@@ -52,23 +52,52 @@ class CableHangerOutline(ActionPlugin):
         ey = start_y
         self.drawLineCSym(start_x, start_y, ex, ey)
 
+        end = None
+
         for x in range(n):
-            self.drawVerticalCombTooth(ex + x * (toothWidth + gapWidth), ey, toothWidth, gapWidth, gapHight, retainerHight, retainerBump)
-        #self.drawArc(-70, -70, -60, -66, -70, -62)
-        #self.drawLine(-30, -30, -20, -30)
-        #self.drawArc(-20, -30, -15, -25, -20, -20)
-        #self.drawLine(-20, -20, -20, -10)
+            end = self.drawVerticalCombTooth(ex + x * (toothWidth + gapWidth), ey, toothWidth, gapWidth, retainerHeight, retainerBump)
+        
+        return (end, chWidth)
+
+    def drawOthersComb(self, start_x, start_y, chHeight):
+        toothWidth = 8
+        gapWidth = 7
+        retainerHeight = 8
+        retainerBump = .8
+
+        ocHeight = chHeight - 2 * self._gapHeight
+
+        n = math.floor((ocHeight - toothWidth) / (toothWidth + gapWidth))
+        
+        gapDistance = n * gapWidth + (n-1) * toothWidth
+
+        rest = ocHeight - gapDistance
+
+        sx = start_x
+        sy = start_y
+        ex = sx
+        ey = sy + self._gapHeight + int(rest / 2)
+        self.drawLineCSym(start_x, start_y, ex, ey)
+
+        for x in range(n):
+            end = self.drawHorizontalCombTooth(ex, ey + x * (toothWidth + gapWidth), toothWidth, gapWidth, retainerHeight, retainerBump)
+        
+        sx = end[0]
+        sy = end[1]
+        ex = sx
+        ey = -start_y
+        self.drawLineCSym(sx, sy, ex, ey)
     
-    def drawVerticalCombTooth(self, start_x, start_y, toothWidth, gapWidth, gapHight, retainerHight, retainerBump):
+    def drawVerticalCombTooth(self, start_x, start_y, toothWidth, gapWidth, retainerHeight, retainerBump):
         ex = start_x
-        ey = start_y + retainerHight
+        ey = start_y + retainerHeight
         mx = start_x + retainerBump
-        my = int(start_y + retainerHight / 2)
+        my = int(start_y + retainerHeight / 2)
         self.drawArcCSym(start_x, start_y, mx, my, ex, ey)
         sx = ex
         sy = ey
         ex = start_x
-        ey = sy + gapHight - retainerHight
+        ey = sy + self._gapHeight - retainerHeight
         self.drawLineCSym(sx, sy, ex, ey)
         sx = ex
         sy = ey
@@ -78,20 +107,56 @@ class CableHangerOutline(ActionPlugin):
         sx = ex
         sy = ey
         ex = sx
-        ey = sy - gapHight + retainerHight
+        ey = sy - self._gapHeight + retainerHeight
         self.drawLineCSym(sx, sy, ex, ey)
         sx = ex
         sy = ey
         ex = sx
-        ey = sy - retainerHight
+        ey = sy - retainerHeight
         mx = sx - retainerBump
-        my = int(sy - retainerHight / 2)
+        my = int(sy - retainerHeight / 2)
         self.drawArcCSym(sx, sy, mx, my, ex, ey)
         sx = ex
         sy = ey
         ex = sx + toothWidth
         ey = sy
         self.drawLineCSym(sx, sy, ex, ey)
+        return (ex, ey)
+    
+    def drawHorizontalCombTooth(self, start_x, start_y, toothWidth, gapWidth, retainerHeight, retainerBump):
+        ex = start_x - retainerHeight
+        ey = start_y
+        mx = int(start_x - retainerHeight / 2)
+        my = start_y + retainerBump
+        self.drawArcCSym(start_x, start_y, mx, my, ex, ey)
+        sx = ex
+        sy = ey
+        ex = sx - self._gapHeight + retainerHeight
+        ey = sy
+        self.drawLineCSym(sx, sy, ex, ey)
+        sx = ex
+        sy = ey
+        ex = sx
+        ey = sy + gapWidth
+        self.drawLineCSym(sx, sy, ex, ey)
+        sx = ex
+        sy = ey
+        ex = sx + self._gapHeight - retainerHeight
+        ey = sy
+        self.drawLineCSym(sx, sy, ex, ey)
+        sx = ex
+        sy = ey
+        ex = sx + retainerHeight
+        ey = sy
+        mx = int(sx + retainerHeight / 2)
+        my = sy - retainerBump
+        self.drawArcCSym(sx, sy, mx, my, ex, ey)
+        sx = ex
+        sy = ey
+        ex = sx
+        ey = sy + toothWidth
+        self.drawLineCSym(sx, sy, ex, ey)
+        return (ex, ey)
     
     def drawLine(self, start_x, start_y, end_x, end_y, layer=Edge_Cuts, width=0.1):
         line = PCB_SHAPE(self._board, SHAPE_T_SEGMENT)
@@ -132,74 +197,5 @@ class CableHangerOutline(ActionPlugin):
         for drawing in self._board.GetDrawings():
             if drawing.GetLayerName() == 'Edge.Cuts':
                 self._board.Remove(drawing)
-
-    def RenderCircles(self):
-        libpath = "/Users/olly/Documents/Github/SloBlo_KiCadLibs/footprints/SloBloFP.pretty"
-        fpName = "Via 1mm"
-        src_type = IO_MGR.GuessPluginTypeFromLibPath(libpath)
-        plugin = IO_MGR.PluginFind(src_type)
-        
-        padSize = 2.6
-        padMargin = 1.2
-        radStepT = 30
-        totalRad = 260
-
-        center = GetBoard().FindFootprintByReference('LS1').GetCenter()
-
-        i = 0
-        for rT in range(0, totalRad, radStepT):
-            r = rT / 10.0
-            c = 2 * math.pi * r
-            size = padSize - .05 * r
-            N = max(1, math.floor(c / (size + padMargin)))
-            for n in range(N):
-                theta = 2 * math.pi / N * n
-                x = center.x + FromMM(r * math.cos(theta))
-                y = center.y + FromMM(r * math.sin(theta))
-
-                i += 1
-                fp = plugin.FootprintLoad(libpath, fpName)
-                fp.SetReference("P%02d" % i)
-                fp.Reference().SetVisible(False)
-                fp.SetPosition(VECTOR2I(x, y))
-
-                drillSize = size * 0.6
-                pad = fp.Pads()[0]
-                pad.SetSize(VECTOR2I(wxSizeMM(size, size)))
-                pad.SetDrillSize(VECTOR2I(wxSizeMM(drillSize, drillSize)))
-                GetBoard().Add(fp)
-    
-    def RenderPhyllotaxisSpirals(self):
-        N = 250
-        base = 3.33
-        baseAngle = math.pi * (1 + math.sqrt(5)) / 2. * base
-        minPadSize = 1
-
-        center = GetBoard().FindFootprintByReference('LS1').GetCenter()
-
-        for n in range(N):
-            r = math.sqrt(n) * 1.5
-            theta = baseAngle * n
-            x = r * math.cos(theta) + center.x / 1000000.
-            y = r * math.sin(theta) + center.y / 1000000.
-            padSize = minPadSize + n/250.
-            pad = self.CreatePad(padSize, padSize * .5, x, y)
-            GetBoard().Add(pad)
-    
-    def CreatePad(self, padSize=2, drillSize=1, posX=0, posY=0):
-        #https://atomic14.com/2022/10/24/kicad-python-scripting-cheat-sheet-copy.html
-        module = FOOTPRINT(GetBoard())
-        pad = PAD(module)
-        pad.SetSize(VECTOR2I(wxSizeMM(padSize, padSize)))
-        pad.SetDrillSize(VECTOR2I(wxSizeMM(drillSize, drillSize)))
-        pad.SetShape(PAD_SHAPE_CIRCLE)
-        pad.SetAttribute(PAD_ATTRIB_PTH)
-        # remove mask to darken backside
-        pad.SetLayerSet(pad.PTHMask().RemoveLayer(B_Mask))
-        pad.SetPosition(VECTOR2I(wxPointMM(0, 0)))
-        #pcb_pad.SetNetCode(net.GetNetCode())
-        module.Add(pad)
-        module.SetPosition(VECTOR2I(wxPointMM(posX, posY)))
-        return module
 
 CableHangerOutline().register()
