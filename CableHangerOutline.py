@@ -16,15 +16,12 @@ class CableHangerOutline(ActionPlugin):
         self._center = wxSize(285, 200)
 
         self.clear()
-
-        #self.RenderCircles()
-        #self.RenderPhyllotaxisSpirals()
         
         self.RenderCableHangerOutline()
     
     def RenderCableHangerOutline(self):
         
-        self._gapHeight = 90
+        self._gapHeight = 85
 
         # Eurorack comb
         loc = self.drawEurorackComb()
@@ -33,16 +30,19 @@ class CableHangerOutline(ActionPlugin):
         self.drawOthersComb(loc[0][0], loc[0][1], loc[1])
 
         # Tool holes
+        # TODO: make them PADs
+        self.drawCircleCSym(-30, -30, -20, -30)
+        self.drawCircleCSym(30, -30, 37, -30)
         
         # Center mounting hole 3/8"
         self.drawCircle(0, 0, 5, 0) # 3/8" = 9,525mm
 
     def drawEurorackComb(self):
-        toothWidth = 6
+        toothWidth = 7
         gapWidth = 5
         retainerHeight = 8
         retainerBump = .5
-        n = 26
+        n = 24
         chWidth = n * gapWidth + (n + 1) * toothWidth
         
         start_x = -chWidth / 2
@@ -189,9 +189,13 @@ class CableHangerOutline(ActionPlugin):
         self.drawLine( start_x,  start_y,  end_x,  end_y, layer, width)
         self.drawLine(-start_x, -start_y, -end_x, -end_y, layer, width)
     
+    def drawCircleCSym(self, start_x, start_y, end_x, end_y, layer=Edge_Cuts, width=0.1):
+        self.drawCircle( start_x,  start_y,  end_x,  end_y, layer, width)
+        self.drawCircle(-start_x, -start_y, -end_x, -end_y, layer, width)
+    
     def drawArcCSym(self, start_x, start_y, mid_x, mid_y, end_x, end_y, layer=Edge_Cuts, width=0.1):
-        self.drawArc( start_x,  start_y,  mid_x,  mid_y,  end_x,  end_y, layer=Edge_Cuts, width=0.1)
-        self.drawArc(-start_x, -start_y, -mid_x, -mid_y, -end_x, -end_y, layer=Edge_Cuts, width=0.1)
+        self.drawArc( start_x,  start_y,  mid_x,  mid_y,  end_x,  end_y, layer, width)
+        self.drawArc(-start_x, -start_y, -mid_x, -mid_y, -end_x, -end_y, layer, width)
     
     def clear(self):
         for drawing in self._board.GetDrawings():
