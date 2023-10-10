@@ -38,11 +38,11 @@ class CableHangerOutline(ActionPlugin):
         self.drawCircle(0, 0, 5, 0) # 3/8" = 9,525mm
 
     def drawEurorackComb(self):
-        toothWidth = 7
+        toothWidth = 10
         gapWidth = 5
         retainerHeight = 8
         retainerBump = .5
-        n = 24
+        n = 19
         chWidth = n * gapWidth + (n + 1) * toothWidth
         
         start_x = -chWidth / 2
@@ -60,10 +60,10 @@ class CableHangerOutline(ActionPlugin):
         return (end, chWidth)
 
     def drawOthersComb(self, start_x, start_y, chHeight):
-        toothWidth = 8
+        toothWidth = 10
         gapWidth = 7
         retainerHeight = 8
-        retainerBump = .8
+        retainerBump = .5
 
         ocHeight = chHeight - 2 * self._gapHeight
 
