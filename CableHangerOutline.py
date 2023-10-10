@@ -101,9 +101,11 @@ class CableHangerOutline(ActionPlugin):
         self.drawLineCSym(sx, sy, ex, ey)
         sx = ex
         sy = ey
+        mx = int(sx + gapWidth / 2)
+        my = int(sy + gapWidth / 2)
         ex = sx + gapWidth
         ey = sy
-        self.drawLineCSym(sx, sy, ex, ey)
+        self.drawArcCSym(sx, sy, mx, my, ex, ey)
         sx = ex
         sy = ey
         ex = sx
@@ -136,9 +138,11 @@ class CableHangerOutline(ActionPlugin):
         self.drawLineCSym(sx, sy, ex, ey)
         sx = ex
         sy = ey
+        mx = int(sx - gapWidth / 2)
+        my = int(sy + gapWidth / 2)
         ex = sx
         ey = sy + gapWidth
-        self.drawLineCSym(sx, sy, ex, ey)
+        self.drawArcCSym(sx, sy, mx, my, ex, ey)
         sx = ex
         sy = ey
         ex = sx + self._gapHeight - retainerHeight
