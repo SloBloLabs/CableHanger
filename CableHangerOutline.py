@@ -20,7 +20,7 @@ class CableHangerOutline(ActionPlugin):
         self.RenderCableHangerOutline()
     
     def RenderCableHangerOutline(self):
-        
+        self._cornerRadius = 3
         self._gapHeight = 85
 
         # Eurorack comb
@@ -44,20 +44,47 @@ class CableHangerOutline(ActionPlugin):
         retainerBump = .5
         n = 19
         chWidth = n * gapWidth + (n + 1) * toothWidth
-        
+
         start_x = -chWidth / 2
         start_y = start_x
 
+        # 1st corner
+        sx = start_x
+        sy = start_y + self._cornerRadius
+        mx = start_x + self._cornerRadius * (1 - math.cos(math.pi/4))
+        my = start_y + self._cornerRadius * (1 - math.sin(math.pi/4))
+        ex = start_x + self._cornerRadius
+        ey = start_y
+        self.drawArcCSym(sx, sy, mx, my, ex, ey)
+
+        sx = ex; sy = ey
         ex = start_x + toothWidth
         ey = start_y
-        self.drawLineCSym(start_x, start_y, ex, ey)
+        self.drawLineCSym(sx, sy, ex, ey)
 
         end = None
 
         for x in range(n):
             end = self.drawVerticalCombTooth(ex + x * (toothWidth + gapWidth), ey, toothWidth, gapWidth, retainerHeight, retainerBump)
         
-        return (end, chWidth)
+            sx_ = end[0]; sy_ = end[1]
+            ex_ = sx_ + toothWidth
+            ey_ = sy_
+#
+            if x == n - 1:
+                ex_ -= self._cornerRadius
+            
+            self.drawLineCSym(sx_, sy_, ex_, ey_)
+        
+        ## 2nd corner
+        sx = ex_; sy = ey_
+        mx = sx + self._cornerRadius * math.cos(math.pi/4)
+        my = sy + self._cornerRadius * (1 - math.sin(math.pi/4))
+        ex = sx + self._cornerRadius
+        ey = sy + self._cornerRadius
+        self.drawArcCSym(ex, ey, mx, my, sx, sy)
+
+        return ((ex, ey), chWidth)
 
     def drawOthersComb(self, start_x, start_y, chHeight):
         toothWidth = 10
@@ -73,8 +100,7 @@ class CableHangerOutline(ActionPlugin):
 
         rest = ocHeight - gapDistance
 
-        sx = start_x
-        sy = start_y
+        sx = start_x; sy = start_y
         ex = sx
         ey = sy + self._gapHeight + int(rest / 2)
         self.drawLineCSym(start_x, start_y, ex, ey)
@@ -82,8 +108,7 @@ class CableHangerOutline(ActionPlugin):
         for x in range(n):
             end = self.drawHorizontalCombTooth(ex, ey + x * (toothWidth + gapWidth), toothWidth, gapWidth, retainerHeight, retainerBump)
         
-        sx = end[0]
-        sy = end[1]
+        sx = end[0]; sy = end[1]
         ex = sx
         ey = -start_y
         self.drawLineCSym(sx, sy, ex, ey)
@@ -94,35 +119,26 @@ class CableHangerOutline(ActionPlugin):
         mx = start_x + retainerBump
         my = int(start_y + retainerHeight / 2)
         self.drawArcCSym(start_x, start_y, mx, my, ex, ey)
-        sx = ex
-        sy = ey
+        sx = ex; sy = ey
         ex = start_x
         ey = sy + self._gapHeight - retainerHeight
         self.drawLineCSym(sx, sy, ex, ey)
-        sx = ex
-        sy = ey
+        sx = ex; sy = ey
         mx = int(sx + gapWidth / 2)
         my = int(sy + gapWidth / 2)
         ex = sx + gapWidth
         ey = sy
         self.drawArcCSym(sx, sy, mx, my, ex, ey)
-        sx = ex
-        sy = ey
+        sx = ex; sy = ey
         ex = sx
         ey = sy - self._gapHeight + retainerHeight
         self.drawLineCSym(sx, sy, ex, ey)
-        sx = ex
-        sy = ey
+        sx = ex; sy = ey
         ex = sx
         ey = sy - retainerHeight
         mx = sx - retainerBump
         my = int(sy - retainerHeight / 2)
         self.drawArcCSym(sx, sy, mx, my, ex, ey)
-        sx = ex
-        sy = ey
-        ex = sx + toothWidth
-        ey = sy
-        self.drawLineCSym(sx, sy, ex, ey)
         return (ex, ey)
     
     def drawHorizontalCombTooth(self, start_x, start_y, toothWidth, gapWidth, retainerHeight, retainerBump):
@@ -131,32 +147,27 @@ class CableHangerOutline(ActionPlugin):
         mx = int(start_x - retainerHeight / 2)
         my = start_y + retainerBump
         self.drawArcCSym(start_x, start_y, mx, my, ex, ey)
-        sx = ex
-        sy = ey
+        sx = ex; sy = ey
         ex = sx - self._gapHeight + retainerHeight
         ey = sy
         self.drawLineCSym(sx, sy, ex, ey)
-        sx = ex
-        sy = ey
+        sx = ex; sy = ey
         mx = int(sx - gapWidth / 2)
         my = int(sy + gapWidth / 2)
         ex = sx
         ey = sy + gapWidth
         self.drawArcCSym(sx, sy, mx, my, ex, ey)
-        sx = ex
-        sy = ey
+        sx = ex; sy = ey
         ex = sx + self._gapHeight - retainerHeight
         ey = sy
         self.drawLineCSym(sx, sy, ex, ey)
-        sx = ex
-        sy = ey
+        sx = ex; sy = ey
         ex = sx + retainerHeight
         ey = sy
         mx = int(sx + retainerHeight / 2)
         my = sy - retainerBump
         self.drawArcCSym(sx, sy, mx, my, ex, ey)
-        sx = ex
-        sy = ey
+        sx = ex; sy = ey
         ex = sx
         ey = sy + toothWidth
         self.drawLineCSym(sx, sy, ex, ey)
