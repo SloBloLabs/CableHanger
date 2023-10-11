@@ -17,9 +17,13 @@ class CableHangerOutline(ActionPlugin):
 
         self.clear()
         
-        self.RenderCableHangerOutline()
+        self.RenderCableHangerCutEdge()
+
+        self.RenderToolHoles()
+
+        self.RenderLogo()
     
-    def RenderCableHangerOutline(self):
+    def RenderCableHangerCutEdge(self):
         self._cornerRadius = 3
         self._gapHeight = 85
 
@@ -28,19 +32,34 @@ class CableHangerOutline(ActionPlugin):
 
         # Other cables comb
         self.drawOthersComb(loc[0][0], loc[0][1], loc[1])
-
-        # Tool holes
-        # TODO: make them PADs
-        self.drawCircleCSym(-30, -30, -20, -30)
-        self.drawCircleCSym(30, -30, 37, -30)
         
         # Center mounting hole 3/8"
         self.drawCircle(0, 0, 5, 0) # 3/8" = 9,525mm
+    
+    def RenderToolHoles(self):
+        # Tool holes
+        toolHolesRadius = 32
+        pad = self.CreatePad(12, 10, -toolHolesRadius, -toolHolesRadius); self._board.Add(pad)
+        pad = self.CreatePad(15, 13,  toolHolesRadius, -toolHolesRadius); self._board.Add(pad)
+        pad = self.CreatePad(12, 10,  toolHolesRadius,  toolHolesRadius); self._board.Add(pad)
+        pad = self.CreatePad(15, 13, -toolHolesRadius,  toolHolesRadius); self._board.Add(pad)
+
+    def RenderLogo(self):
+        libpath = "/Users/olly/Documents/Github/SloBlo_KiCadLibs/footprints/SloBloFP.pretty"
+        fpName = "SloBloLogo_230x280"
+        src_type = IO_MGR.GuessPluginTypeFromLibPath(libpath)
+        plugin = IO_MGR.PluginFind(src_type)
+
+        fp = plugin.FootprintLoad(libpath, fpName)
+        fp.SetReference("SloBloLogo")
+        fp.Reference().SetVisible(False)
+        fp.SetPosition(VECTOR2I(wxSizeMM(self._center.x, self._center.y)))
+        self._board.Add(fp)
 
     def drawEurorackComb(self):
         toothWidth = 10
         gapWidth = 5
-        retainerHeight = 8
+        retainerHeight = 5
         retainerBump = .5
         n = 19
         chWidth = n * gapWidth + (n + 1) * toothWidth
@@ -71,7 +90,7 @@ class CableHangerOutline(ActionPlugin):
             ex_ = sx_ + toothWidth
             ey_ = sy_
 #
-            if x == n - 1:
+            if x == (n - 1):
                 ex_ -= self._cornerRadius
             
             self.drawLineCSym(sx_, sy_, ex_, ey_)
@@ -89,20 +108,20 @@ class CableHangerOutline(ActionPlugin):
     def drawOthersComb(self, start_x, start_y, chHeight):
         toothWidth = 10
         gapWidth = 7
-        retainerHeight = 8
+        retainerHeight = 5
         retainerBump = .5
 
-        ocHeight = chHeight - 2 * self._gapHeight
+        ocHeight = chHeight - 2 * (self._gapHeight + self._cornerRadius)
 
         n = math.floor((ocHeight - toothWidth) / (toothWidth + gapWidth))
         
-        gapDistance = n * gapWidth + (n-1) * toothWidth
+        gapDistance = n * gapWidth + (n - 1) * toothWidth
 
         rest = ocHeight - gapDistance
 
         sx = start_x; sy = start_y
         ex = sx
-        ey = sy + self._gapHeight + int(rest / 2)
+        ey = sy + self._gapHeight + (rest / 2)
         self.drawLineCSym(start_x, start_y, ex, ey)
 
         for x in range(n):
@@ -212,9 +231,28 @@ class CableHangerOutline(ActionPlugin):
         self.drawArc( start_x,  start_y,  mid_x,  mid_y,  end_x,  end_y, layer, width)
         self.drawArc(-start_x, -start_y, -mid_x, -mid_y, -end_x, -end_y, layer, width)
     
+    def CreatePad(self, padSize=2, drillSize=1, posX=0, posY=0):
+        #https://atomic14.com/2022/10/24/kicad-python-scripting-cheat-sheet-copy.html
+        module = FOOTPRINT(GetBoard())
+        pad = PAD(module)
+        pad.SetSize(VECTOR2I(wxSizeMM(padSize, padSize)))
+        pad.SetDrillSize(VECTOR2I(wxSizeMM(drillSize, drillSize)))
+        pad.SetShape(PAD_SHAPE_CIRCLE)
+        pad.SetAttribute(PAD_ATTRIB_PTH)
+        # remove mask to darken backside
+        pad.SetLayerSet(pad.PTHMask().RemoveLayer(B_Mask))
+        pad.SetPosition(VECTOR2I(wxPointMM(0, 0)))
+        #pcb_pad.SetNetCode(net.GetNetCode())
+        module.Add(pad)
+        module.SetPosition(VECTOR2I(wxPointMM(posX + self._center.x, posY + self._center.y)))
+        return module
+    
     def clear(self):
         for drawing in self._board.GetDrawings():
             if drawing.GetLayerName() == 'Edge.Cuts':
                 self._board.Remove(drawing)
+        
+        # TODO: Footprint Housekeeping
+        #self._board.DeleteAllFootprints() # this kills KiCad for unknown reason
 
 CableHangerOutline().register()
