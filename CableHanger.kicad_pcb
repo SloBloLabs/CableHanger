@@ -95,7 +95,7 @@
     )
   )
 
-  (property "VERSION" "0v01")
+  (property "VERSION" "0v1")
 
   (net 0 "")
 
@@ -9036,7 +9036,7 @@
     (stroke (width 0.1) (type default)) (layer "Edge.Cuts") (tstamp ff6e4ba1-3676-4216-ab2a-bad2249597a5))
   (gr_line (start 272.5 342.5) (end 272.5 262.5)
     (stroke (width 0.1) (type default)) (layer "Edge.Cuts") (tstamp fffd0fab-e781-4c63-a5d3-a930403a026d))
-  (gr_text "JLCJLCJLCJLC" (at 139.25 340 270) (layer "B.SilkS") (tstamp 33c35c67-182b-440f-bda0-5df4f4a5b95b)
+  (gr_text "JLCJLCJLCJLC" (at 430.5 119 90) (layer "B.SilkS") (tstamp 33c35c67-182b-440f-bda0-5df4f4a5b95b)
     (effects (font (size 1 1) (thickness 0.15)) (justify left bottom mirror))
   )
   (gr_text "SloBlo Labs - Cable Hanger ${VERSION}" (at 430.75 59 90) (layer "B.SilkS") (tstamp 52c8133d-be7a-4ee6-a186-7001f2b83eea)
