@@ -240,5 +240,7 @@
     "legacy_lib_list": []
   },
   "sheets": [],
-  "text_variables": {}
+  "text_variables": {
+    "VERSION": "0v01"
+  }
 }

@@ -39,10 +39,17 @@ class CableHangerOutline(ActionPlugin):
     def RenderToolHoles(self):
         # Tool holes
         toolHolesRadius = 32
+        orthoShift      = 5
+
         pad = self.CreatePad(12, 10, -toolHolesRadius, -toolHolesRadius); self._board.Add(pad)
         pad = self.CreatePad(15, 13,  toolHolesRadius, -toolHolesRadius); self._board.Add(pad)
         pad = self.CreatePad(12, 10,  toolHolesRadius,  toolHolesRadius); self._board.Add(pad)
         pad = self.CreatePad(15, 13, -toolHolesRadius,  toolHolesRadius); self._board.Add(pad)
+        
+        pad = self.CreatePad(11, 9, 0                            , -toolHolesRadius - orthoShift); self._board.Add(pad)
+        pad = self.CreatePad(11, 9, 0                            ,  toolHolesRadius + orthoShift); self._board.Add(pad)
+        pad = self.CreatePad(11, 9,  toolHolesRadius + orthoShift,                             0); self._board.Add(pad)
+        pad = self.CreatePad(11, 9, -toolHolesRadius - orthoShift,                             0); self._board.Add(pad)
 
     def RenderLogo(self):
         libpath = "/Users/olly/Documents/Github/SloBlo_KiCadLibs/footprints/SloBloFP.pretty"
