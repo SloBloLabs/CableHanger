@@ -5,9 +5,9 @@ import math
 # https://forum.kicad.info/t/creating-arcs-in-pcbnew-python/28321
 # https://python.hotexamples.com/examples/kicad.point/Point/-/python-point-class-examples.html
 
-class CableHangerOutline(ActionPlugin):
+class CableHolderOutline(ActionPlugin):
     def defaults(self):
-        self.name = "CableHangerOutline"
+        self.name = "CableHolderOutline"
         self.category = "A descriptive category name"
         self.description = "A description of the plugin and what it does"
     
@@ -17,13 +17,13 @@ class CableHangerOutline(ActionPlugin):
 
         self.clear()
         
-        self.RenderCableHangerCutEdge()
+        self.RenderCableHolderCutEdge()
 
         self.RenderToolHoles()
 
         self.RenderLogo()
     
-    def RenderCableHangerCutEdge(self):
+    def RenderCableHolderCutEdge(self):
         self._cornerRadius = 3
         self._gapHeight = 85
 
@@ -262,4 +262,4 @@ class CableHangerOutline(ActionPlugin):
         # TODO: Footprint Housekeeping
         #self._board.DeleteAllFootprints() # this kills KiCad for unknown reason
 
-CableHangerOutline().register()
+CableHolderOutline().register()

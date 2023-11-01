@@ -6,7 +6,7 @@
 
   (paper "A2")
   (title_block
-    (title " Cable Hanger")
+    (title " Cable Holder")
     (date "2023-10-11")
     (rev "${VERSION}")
     (company "SloBlo Labs")
@@ -9039,7 +9039,7 @@
   (gr_text "JLCJLCJLCJLC" (at 430.5 119 90) (layer "B.SilkS") (tstamp 33c35c67-182b-440f-bda0-5df4f4a5b95b)
     (effects (font (size 1 1) (thickness 0.15)) (justify left bottom mirror))
   )
-  (gr_text "SloBlo Labs - Cable Hanger ${VERSION}" (at 430.75 59 90) (layer "B.SilkS") (tstamp 52c8133d-be7a-4ee6-a186-7001f2b83eea)
+  (gr_text "SloBlo Labs - Cable Holder ${VERSION}" (at 430.75 59 90) (layer "B.SilkS") (tstamp 52c8133d-be7a-4ee6-a186-7001f2b83eea)
     (effects (font (size 2 2) (thickness 0.15)) (justify left bottom mirror))
   )
 
