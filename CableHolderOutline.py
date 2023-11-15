@@ -203,7 +203,8 @@ class CableHolderOutline(ActionPlugin):
         line = PCB_SHAPE(self._board, SHAPE_T_SEGMENT)
         line.SetStart(VECTOR2I(wxSizeMM(start_x + self._center.x, start_y + self._center.y)))
         line.SetEnd  (VECTOR2I(wxSizeMM(end_x   + self._center.x, end_y   + self._center.y)))
-        line.SetWidth(int(width * PCB_IU_PER_MM)) # PCB_IU_PER_MM = 1000000
+        # line.SetWidth(int(width * PCB_IU_PER_MM)) # PCB_IU_PER_MM = 1000000
+        line.SetWidth(FromMM(width))
         line.SetLayer(layer)
         self._board.Add(line)
     
@@ -211,19 +212,20 @@ class CableHolderOutline(ActionPlugin):
         circle = PCB_SHAPE(self._board, SHAPE_T_CIRCLE)
         circle.SetStart(VECTOR2I(wxSizeMM(start_x + self._center.x, start_y + self._center.y)))
         circle.SetEnd  (VECTOR2I(wxSizeMM(end_x   + self._center.x, end_y   + self._center.y)))
-        circle.SetWidth(int(width * PCB_IU_PER_MM)) # PCB_IU_PER_MM = 1000000
+        # circle.SetWidth(int(width * PCB_IU_PER_MM)) # PCB_IU_PER_MM = 1000000
+        circle.SetWidth(FromMM(width))
         circle.SetLayer(layer)
         self._board.Add(circle)
     
     def drawArc(self, start_x, start_y, mid_x, mid_y, end_x, end_y, layer=Edge_Cuts, width=0.1):
-        arc = PCB_SHAPE(self._board)
-        arc.SetShape(SHAPE_T_ARC)
+        arc = PCB_SHAPE(self._board, SHAPE_T_ARC)
         start = VECTOR2I(wxPointMM(start_x + self._center.x, start_y + self._center.y))
-        mid = VECTOR2I(wxPointMM(mid_x     + self._center.x, mid_y   + self._center.y))
-        end = VECTOR2I(wxPointMM(end_x     + self._center.x, end_y   + self._center.y))
+        mid   = VECTOR2I(wxPointMM(mid_x   + self._center.x, mid_y   + self._center.y))
+        end   = VECTOR2I(wxPointMM(end_x   + self._center.x, end_y   + self._center.y))
         arc.SetArcGeometry(start, mid, end)
         arc.SetLayer(layer)
-        arc.SetWidth(int(width * PCB_IU_PER_MM))
+        # arc.SetWidth(int(width * PCB_IU_PER_MM)) # PCB_IU_PER_MM = 1000000
+        arc.SetWidth(FromMM(width))
         self._board.Add(arc)
     
     def drawLineCSym(self, start_x, start_y, end_x, end_y, layer=Edge_Cuts, width=0.1):
@@ -240,7 +242,7 @@ class CableHolderOutline(ActionPlugin):
     
     def CreatePad(self, padSize=2, drillSize=1, posX=0, posY=0):
         #https://atomic14.com/2022/10/24/kicad-python-scripting-cheat-sheet-copy.html
-        module = FOOTPRINT(GetBoard())
+        module = FOOTPRINT(self._board)
         pad = PAD(module)
         pad.SetSize(VECTOR2I(wxSizeMM(padSize, padSize)))
         pad.SetDrillSize(VECTOR2I(wxSizeMM(drillSize, drillSize)))
