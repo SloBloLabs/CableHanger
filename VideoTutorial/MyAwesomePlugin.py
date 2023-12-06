@@ -1,5 +1,4 @@
 from pcbnew import *
-import math
 
 class MyAwesomePlugin(ActionPlugin):
     def defaults(self):
@@ -9,10 +8,17 @@ class MyAwesomePlugin(ActionPlugin):
     
     def Run(self):
         self._board = GetBoard()
-        self._center = wxSize(150, 100)
+        #self._center = wxSize(150, 100)
         self.DoAwesomeStuff()
     
     def DoAwesomeStuff(self):
+        
+        self._center = wxSize(100, 100)
+        self.drawLine(0, 0, 50, 0)
+        self.drawCircle(0, 0, 00, 50)
+        self.drawArc(0, 0, 0, -50, 50, -50)
+
+        self._center = wxSize(200, 75)
         c = [[0,0], [0, 50], [50, 50], [50, 0]]
         for p in range(len(c)):
             p_end = (p + 1) % len(c)
